@@ -1,26 +1,38 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+// src/server.js
 const mongoose = require('mongoose');
 const config = require('./config');
-const userRoutes = require('./routes/userRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
 
-const app = express();
+// Connect to MongoDB
+mongoose.connect(config.mongodbUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(async () => {
+    console.log('MongoDB connection successful');
 
-// Middleware
-app.use(bodyParser.json());
+    // Fetch all collections in CryptoDB (replace 'CryptoDB' with your actual database name)
+    const cryptoDB = mongoose.connection.getClient().db('CryptoDB');
+    const collectionNames = await cryptoDB.listCollections().toArray();
 
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/transactions', transactionRoutes);
+    // Iterate through each collection and fetch documents
+    for (let i = 0; i < collectionNames.length; i++) {
+        const collectionName = collectionNames[i].name;
+        const collection = cryptoDB.collection(collectionName);
 
-// Database Connection
-mongoose.connect(config.mongodbUri)
-    .then(() => console.log('MongoDB connected...'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
-// Start Server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+        const documents = await collection.find({}).toArray();
+        console.log(`Documents in collection '${collectionName}':`);
+        console.log(documents);
+    }
+})
+.catch(err => {
+    console.error('MongoDB connection error:', err);
+})
+.finally(() => {
+    // Close the Mongoose connection on app termination
+    process.on('SIGINT', () => {
+        mongoose.connection.close(() => {
+            console.log('MongoDB connection disconnected through app termination');
+            process.exit(0);
+        });
+    });
 });
