@@ -1,4 +1,3 @@
-// src/models/userModel.js
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -6,7 +5,7 @@ const userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
-    created_at: Date,
+    created_at: { type: Date, default: Date.now },
     role: String,
     status: String,
     invite_link: String,
