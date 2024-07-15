@@ -1,16 +1,18 @@
+// db.js
 const mongoose = require('mongoose');
-const config = require('./config');
 
-mongoose.connect(config.mongodbUri, {
+// Replace your MongoDB URI with your actual connection string
+const mongoURI = 'mongodb+srv://demoUser:User@cluster0.4qgpbhh.mongodb.net/CryptoDB';
+
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
-
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-    console.log('MongoDB connected successfully');
+    console.log('Connected to MongoDB');
 });
 
-module.exports = db;
+module.exports = mongoose;

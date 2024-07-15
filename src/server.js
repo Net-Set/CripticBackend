@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config');
 const signupRoute = require('./routes/signup');
-
+const loginRoute = require('./routes/login');
 const app = express();
 
 // Body Parser Middleware
@@ -19,6 +19,7 @@ mongoose.connect(config.mongodbUri, {
 
 // Routes
 app.use('/signup', signupRoute);
+app.use('/login', loginRoute);
 
 // Root endpoint
 app.get('/', (req, res) => {

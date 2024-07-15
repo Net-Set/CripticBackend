@@ -2,8 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid'); // Ensure uuid package is installed: npm install uuid
+const { v4: uuidv4 } = require('uuid');
 
 const User = require('../models/User'); // Ensure User model is defined correctly
 
@@ -30,13 +29,13 @@ router.post('/', async (req, res) => {
             email,
             password: hashedPassword,
             created_at: new Date(),
-            role: 'member', // Example: default role for signup
-            status: 'active', // Example: default status for signup
-            invite_link: `https://yourplatform.com/invite/${user_id}`, // Example: generate invite link based on user_id
-            wallet_id: 'generated_wallet_id' // Example: generate or leave empty for user to fill
+            role: 'member',
+            status: 'active',
+            invite_link: `https://yourplatform.com/invite/${user_id}`,
+            wallet_id: 'generated_wallet_id'
         });
 
-        // Save the new user to the database
+        // Save the new user to the database (CryptoCollection)
         await newUser.save();
 
         res.status(201).json({ message: 'User created successfully', user: newUser });
